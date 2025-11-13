@@ -18,7 +18,7 @@ func (g *gateSpot) SpotCancelOrder(ctx context.Context, symbol string, orderID i
 	return nil, nil
 }
 
-func (g *gateSpot) FuturesCreateOrder(ctx context.Context, symbol string, side exchange.OrderSide, orderType exchange.OrderType, quantity, price string) (*exchange.Order, error) {
+func (g *gateSpot) FuturesCreateOrder(ctx context.Context, symbol string, side exchange.OrderSide, limitPrice, quantity string) (*exchange.Order, error) {
 	return nil, nil
 }
 

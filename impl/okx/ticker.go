@@ -6,6 +6,10 @@ import (
 	"github.com/so68/exchange-lib/exchange"
 )
 
-func (o *okx) GetSymbolTickers(ctx context.Context, symbol ...string) (*exchange.Tickers, error) {
+func (o *okx) GetSpotSymbolTickers(ctx context.Context, symbol ...string) (*exchange.Tickers, error) {
+	return nil, nil
+}
+
+func (o *okx) GetFuturesSymbolTickers(ctx context.Context, symbol ...string) (*exchange.Tickers, error) {
 	return nil, nil
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // SpotBalance 获取现货余额
-func (o *okx) SpotBalance(ctx context.Context) ([]exchange.Balance, error) {
+func (o *okx) GetSpotBalance(ctx context.Context) ([]exchange.Balance, error) {
 	resp, err := o.authRequest("GET", "/api/v5/account/balance", nil)
 	if err != nil {
 		return nil, err
@@ -40,6 +40,6 @@ func (o *okx) SpotBalance(ctx context.Context) ([]exchange.Balance, error) {
 }
 
 // FuturesBalance 获取合约余额
-func (o *okx) FuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
-	return o.SpotBalance(ctx)
+func (o *okx) GetFuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
+	return o.GetSpotBalance(ctx)
 }

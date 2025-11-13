@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/so68/exchange-lib/exchange"
 	"github.com/so68/exchange-lib/internal/utils"
 )
 
@@ -22,7 +21,7 @@ type okx struct {
 	client     *http.Client
 }
 
-func NewOKX(apiKey, secretKey string, passphrase string) exchange.Exchange {
+func NewOKX(apiKey, secretKey string, passphrase string) *okx {
 	return &okx{
 		apiKey:     apiKey,
 		secretKey:  secretKey,

@@ -8,7 +8,7 @@ import (
 )
 
 // SpotBalance 获取现货余额
-func (b *binanceExchange) SpotBalance(ctx context.Context) ([]exchange.Balance, error) {
+func (b *binanceExchange) GetSpotBalance(ctx context.Context) ([]exchange.Balance, error) {
 	acc, err := b.client.NewGetAccountService().Do(ctx)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (b *binanceExchange) SpotBalance(ctx context.Context) ([]exchange.Balance, 
 }
 
 // FuturesBalance 获取合约余额
-func (b *binanceExchange) FuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
+func (b *binanceExchange) GetFuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
 	acc, err := b.futuresClient.NewGetAccountService().Do(ctx)
 	if err != nil {
 		return nil, err

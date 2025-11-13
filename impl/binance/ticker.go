@@ -8,8 +8,8 @@ import (
 )
 
 // GetSymbolTickers 获取交易对行情
-func (b *binanceExchange) GetSymbolTickers(ctx context.Context, symbol ...string) (*exchange.Tickers, error) {
-	resp, err := b.client.NewListSymbolTickerService().Symbols(symbol).Do(ctx)
+func (b *binanceExchange) GetSpotSymbolTickers(ctx context.Context, symbols ...string) (*exchange.Tickers, error) {
+	resp, err := b.client.NewListPriceChangeStatsService().Symbols(symbols).Do(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("binance get ticker: %w", err)
 	}
@@ -29,4 +29,29 @@ func (b *binanceExchange) GetSymbolTickers(ctx context.Context, symbol ...string
 	return &exchange.Tickers{
 		Tickers: res,
 	}, nil
+}
+
+// GetFuturesSymbolTickers 获取合约交易对行情
+func (b *binanceExchange) GetFuturesSymbolTickers(ctx context.Context, symbols ...string) (*exchange.Tickers, error) {
+	var res []*exchange.Ticker
+	for _, symbol := range symbols {
+		resp, err := b.futuresClient.NewListPriceChangeStatsService().Symbol(symbol).Do(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("binance futures get ticker: %w", err)
+		}
+
+		for _, t := range resp {
+			res = append(res, &exchange.Ticker{
+				Symbol:      t.Symbol,
+				OpenPrice:   t.OpenPrice,
+				HighPrice:   t.HighPrice,
+				LowPrice:    t.LowPrice,
+				LastPrice:   t.LastPrice,
+				Volume:      t.Volume,
+				QuoteVolume: t.QuoteVolume,
+				Count:       t.Count,
+			})
+		}
+	}
+	return &exchange.Tickers{Tickers: res}, nil
 }

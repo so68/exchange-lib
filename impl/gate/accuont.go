@@ -7,8 +7,8 @@ import (
 	"github.com/so68/exchange-lib/exchange"
 )
 
-// SpotBalance 获取现货余额
-func (g *gateSpot) SpotBalance(ctx context.Context) ([]exchange.Balance, error) {
+// GetSpotBalance 获取现货余额
+func (g *gateSpot) GetSpotBalance(ctx context.Context) ([]exchange.Balance, error) {
 	bal, _, err := g.client.SpotApi.ListSpotAccounts(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -37,8 +37,8 @@ func (g *gateSpot) SpotBalance(ctx context.Context) ([]exchange.Balance, error) 
 	return res, nil
 }
 
-// FuturesBalance 获取合约余额
-func (g *gateSpot) FuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
+// GetFuturesBalance 获取合约余额
+func (g *gateSpot) GetFuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
 	// Gate.io 支持多种结算货币，通常使用 USDT
 	settle := "usdt"
 	account, _, err := g.client.FuturesApi.ListFuturesAccounts(ctx, settle)
