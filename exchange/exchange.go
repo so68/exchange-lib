@@ -19,9 +19,9 @@ type Exchange interface {
 	// CreateSpotOrder 现货下单
 	CreateSpotOrder(ctx context.Context, symbol string, side OrderSide, limitPrice, quantity string) (*Order, error)
 	// GetSpotOrder 获取现货订单
-	GetSpotOrder(ctx context.Context, symbol string, orderID int64) (*Order, error)
+	GetSpotOrder(ctx context.Context, symbol string, orderID string) (*Order, error)
 	// CancelSpotOrder 现货取消订单
-	CancelSpotOrder(ctx context.Context, symbol string, orderID int64) (*Order, error)
+	CancelSpotOrder(ctx context.Context, symbol string, orderID string) (*Order, error)
 
 	///////////////////////////////// 合约 /////////////////////////////////////////
 	// GetFuturesSymbolTickers 获取合约交易对行情
@@ -31,7 +31,7 @@ type Exchange interface {
 	// CreateFuturesOrder 合约下单
 	CreateFuturesOrder(ctx context.Context, symbol string, side OrderSide, limitPrice, quantity string) (*Order, error)
 	// GetFuturesOrder 获取合约订单
-	GetFuturesOrder(ctx context.Context, symbol string, orderID int64) (*Order, error)
+	GetFuturesOrder(ctx context.Context, symbol string, orderID string) (*Order, error)
 	// GetFuturesPositionRisk 获取合约持仓风险
 	GetFuturesPositionRisk(ctx context.Context, symbol string) (*SymbolPositionRisk, error)
 	// CloseFuturesPositionRisk 平仓合约持仓风险
@@ -41,5 +41,5 @@ type Exchange interface {
 	// CancelFuturesSLTP 撤销合约止损止盈
 	CancelFuturesSLTP(ctx context.Context, symbol string) error
 	// CancelFuturesOrder 撤销合约订单
-	CancelFuturesOrder(ctx context.Context, symbol string, orderID int64) (*Order, error)
+	CancelFuturesOrder(ctx context.Context, symbol string, orderID string) (*Order, error)
 }

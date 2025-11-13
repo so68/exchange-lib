@@ -54,7 +54,7 @@ func (e *exchangeSpec) GetSymbolSpec(symbol string) (*symbolSpec, int) {
 	e.RLock()
 	defer e.RUnlock()
 	for i, s := range e.Symbols {
-		if s.Base+s.Quote == symbol {
+		if s.Id == symbol {
 			return s, i
 		}
 	}

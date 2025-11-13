@@ -58,7 +58,7 @@ func (b *binanceExchange) CreateFuturesOrder(ctx context.Context, symbol string,
 	}
 
 	return &exchange.Order{
-		OrderID:       resp.OrderID,
+		OrderID:       strconv.FormatInt(resp.OrderID, 10),
 		Symbol:        resp.Symbol,
 		Side:          exchange.OrderSide(resp.Side),
 		Type:          exchange.OrderType(resp.Type),
@@ -74,14 +74,18 @@ func (b *binanceExchange) CreateFuturesOrder(ctx context.Context, symbol string,
 }
 
 // GetFuturesOrder 获取合约订单
-func (b *binanceExchange) GetFuturesOrder(ctx context.Context, symbol string, orderID int64) (*exchange.Order, error) {
-	resp, err := b.futuresClient.NewGetOrderService().Symbol(symbol).OrderID(orderID).Do(ctx)
+func (b *binanceExchange) GetFuturesOrder(ctx context.Context, symbol string, orderID string) (*exchange.Order, error) {
+	orderIDInt, err := strconv.ParseInt(orderID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("无效的订单ID: %w", err)
+	}
+	resp, err := b.futuresClient.NewGetOrderService().Symbol(symbol).OrderID(orderIDInt).Do(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("binance futures get order: %w", err)
 	}
 
 	return &exchange.Order{
-		OrderID:       resp.OrderID,
+		OrderID:       orderID,
 		Symbol:        resp.Symbol,
 		Side:          exchange.OrderSide(resp.Side),
 		Type:          exchange.OrderType(resp.Type),
@@ -229,13 +233,17 @@ func (b *binanceExchange) CloseFuturesPositionRisk(ctx context.Context, symbol s
 }
 
 // CancelFuturesOrder 撤销合约订单
-func (b *binanceExchange) CancelFuturesOrder(ctx context.Context, symbol string, orderID int64) (*exchange.Order, error) {
-	resp, err := b.futuresClient.NewCancelOrderService().Symbol(symbol).OrderID(orderID).Do(ctx)
+func (b *binanceExchange) CancelFuturesOrder(ctx context.Context, symbol string, orderID string) (*exchange.Order, error) {
+	orderIDInt, err := strconv.ParseInt(orderID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("无效的订单ID: %w", err)
+	}
+	resp, err := b.futuresClient.NewCancelOrderService().Symbol(symbol).OrderID(orderIDInt).Do(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("binance futures cancel order: %w", err)
 	}
 	return &exchange.Order{
-		OrderID:       resp.OrderID,
+		OrderID:       orderID,
 		Symbol:        resp.Symbol,
 		Side:          exchange.OrderSide(resp.Side),
 		Type:          exchange.OrderType(resp.Type),
@@ -420,6 +428,10 @@ func (b *binanceExchange) getFuturesSymbolSpec(ctx context.Context, symbol strin
 
 			binanceFuturesSpec.SetSymbolSpec(s.Symbol, specTmp)
 		}
+	}
+
+	if spec == nil {
+		return nil, fmt.Errorf("合约规格不存在: %s", symbol)
 	}
 
 	return spec, nil

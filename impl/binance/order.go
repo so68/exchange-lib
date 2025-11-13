@@ -69,5 +69,4 @@ func (b *binanceExchange) filtersQuantity(spec *symbolSpec, price, quantity stri
 
 	precision := utils.GetNumberPrecision(spec.StepSize)
 	return quantityFloat.Text('f', precision), nil
-
 }

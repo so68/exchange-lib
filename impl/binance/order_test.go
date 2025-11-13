@@ -42,11 +42,11 @@ func TestSpotCreateOrder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("现货下单失败: %v", err)
 	}
-	fmt.Printf("【Binance】创建现货订单|订单ID: %d, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
+	fmt.Printf("【Binance】创建现货订单|订单ID: %s, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
 }
 
 // TestSpotGetOrder 获取现货订单
-// go test -v ./impl/binance -run "^TestSpotGetOrder$" -args --orderID=38636974388
+// go test -v ./impl/binance -run "^TestSpotGetOrder$" -args --symbol=ETHUSDT --orderID=38636974388
 func TestSpotGetOrder(t *testing.T) {
 	flag.Parse()
 
@@ -55,11 +55,11 @@ func TestSpotGetOrder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("现货获取订单失败: %v", err)
 	}
-	fmt.Printf("【Binance】获取现货订单|订单ID: %d, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
+	fmt.Printf("【Binance】获取现货订单|订单ID: %s, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
 }
 
 // TestSpotCancelOrder 撤销现货订单
-// go test -v ./impl/binance -run "^TestSpotCancelOrder$" -args --orderID=38636974388
+// go test -v ./impl/binance -run "^TestSpotCancelOrder$" -args --symbol=ETHUSDT --orderID=38636974388
 func TestSpotCancelOrder(t *testing.T) {
 	flag.Parse()
 
@@ -68,7 +68,7 @@ func TestSpotCancelOrder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("现货撤销订单失败: %v", err)
 	}
-	fmt.Printf("【Binance】撤销现货订单|订单ID: %d, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
+	fmt.Printf("【Binance】撤销现货订单|订单ID: %s, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
 }
 
 // TestFuturesCreateOrder 创建合约订单
@@ -97,7 +97,7 @@ func TestFuturesCreateOrder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("合约下单失败: %v", err)
 	}
-	fmt.Printf("【Binance】创建合约订单|订单ID: %d, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
+	fmt.Printf("【Binance】创建合约订单|订单ID: %s, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
 }
 
 // TestFuturesGetOrder 获取合约订单
@@ -110,7 +110,7 @@ func TestFuturesGetOrder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("合约获取订单失败: %v", err)
 	}
-	fmt.Printf("【Binance】获取合约订单|订单ID: %d, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
+	fmt.Printf("【Binance】获取合约订单|订单ID: %s, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
 }
 
 // TestFuturesGetPositionRisk 获取合约持仓风险
@@ -177,5 +177,5 @@ func TestFuturesCancelOrder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("合约撤销订单失败: %v", err)
 	}
-	fmt.Printf("【Binance】撤销合约订单|订单ID: %d, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
+	fmt.Printf("【Binance】撤销合约订单|订单ID: %s, 交易对: %s, 方向: %s, 类型: %s, 状态: %s, 价格: %s, 数量: %s, 已执行数量: %s, 实际数量: %s, 成交金额: %s, 时间类型: %s, 创建时间: %d, 更新时间: %d\n", order.OrderID, order.Symbol, order.Side, order.Type, order.Status, order.Price, order.Quantity, order.ExecutedQty, order.ActualQty, order.QuoteQuantity, order.TimeInForce, order.CreateTime, order.UpdateTime)
 }

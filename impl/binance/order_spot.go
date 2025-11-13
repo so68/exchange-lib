@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"strconv"
 
 	"github.com/adshao/go-binance/v2"
 	"github.com/so68/exchange-lib/exchange"
@@ -41,7 +42,7 @@ func (b *binanceExchange) CreateSpotOrder(ctx context.Context, symbol string, si
 	}
 
 	return &exchange.Order{
-		OrderID:       orderResp.OrderID,
+		OrderID:       strconv.FormatInt(orderResp.OrderID, 10),
 		Symbol:        orderResp.Symbol,
 		Side:          exchange.OrderSide(orderResp.Side),
 		Type:          exchange.OrderType(orderResp.Type),
@@ -57,10 +58,14 @@ func (b *binanceExchange) CreateSpotOrder(ctx context.Context, symbol string, si
 }
 
 // GetSpotOrder 获取现货订单
-func (b *binanceExchange) GetSpotOrder(ctx context.Context, symbol string, orderID int64) (*exchange.Order, error) {
+func (b *binanceExchange) GetSpotOrder(ctx context.Context, symbol string, orderID string) (*exchange.Order, error) {
+	orderIDInt, err := strconv.ParseInt(orderID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("无效的订单ID: %w", err)
+	}
 	resp, err := b.client.NewGetOrderService().
 		Symbol(symbol).
-		OrderID(orderID).
+		OrderID(orderIDInt).
 		Do(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("binance spot get order failed: %w", err)
@@ -69,7 +74,7 @@ func (b *binanceExchange) GetSpotOrder(ctx context.Context, symbol string, order
 	// 获取订单的成交记录（包含手续费信息）
 	trades, err := b.client.NewListTradesService().
 		Symbol(symbol).
-		OrderId(orderID).
+		OrderId(orderIDInt).
 		Do(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("binance spot get order trades failed: %w", err)
@@ -117,7 +122,7 @@ func (b *binanceExchange) GetSpotOrder(ctx context.Context, symbol string, order
 	}
 
 	return &exchange.Order{
-		OrderID:       resp.OrderID,
+		OrderID:       strconv.FormatInt(resp.OrderID, 10),
 		Symbol:        resp.Symbol,
 		Side:          exchange.OrderSide(resp.Side),
 		Type:          exchange.OrderType(resp.Type),
@@ -134,17 +139,21 @@ func (b *binanceExchange) GetSpotOrder(ctx context.Context, symbol string, order
 }
 
 // CancelSpotOrder 撤销现货订单
-func (b *binanceExchange) CancelSpotOrder(ctx context.Context, symbol string, orderID int64) (*exchange.Order, error) {
+func (b *binanceExchange) CancelSpotOrder(ctx context.Context, symbol string, orderID string) (*exchange.Order, error) {
+	orderIDInt, err := strconv.ParseInt(orderID, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("无效的订单ID: %w", err)
+	}
 	resp, err := b.client.NewCancelOrderService().
 		Symbol(symbol).
-		OrderID(orderID).
+		OrderID(orderIDInt).
 		Do(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("binance spot cancel order failed: %w", err)
 	}
 
 	return &exchange.Order{
-		OrderID:       resp.OrderID,
+		OrderID:       orderID,
 		Symbol:        resp.Symbol,
 		Side:          exchange.OrderSide(resp.Side),
 		Type:          exchange.OrderType(resp.Type),
@@ -199,6 +208,10 @@ func (b *binanceExchange) getSpotSymbolSpec(ctx context.Context, symbol string) 
 		}
 
 		binanceSpotSpec.SetSymbolSpec(symbol, spec)
+	}
+
+	if spec == nil {
+		return nil, fmt.Errorf("交易对规格不存在: %s", symbol)
 	}
 
 	return spec, nil

@@ -13,5 +13,5 @@ var (
 	amount    = flag.Float64("amount", 0.0, "数量")
 	side      = flag.String("side", "BUY", "方向")
 	leverage  = flag.Int("leverage", 1, "杠杆")
-	orderID   = flag.Int64("orderID", 0, "订单ID")
+	orderID   = flag.String("orderID", "", "订单ID")
 )

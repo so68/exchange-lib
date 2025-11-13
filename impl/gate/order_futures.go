@@ -12,11 +12,11 @@ func (g *gateExchange) CreateFuturesOrder(ctx context.Context, symbol string, si
 	return nil, nil
 }
 
-func (g *gateExchange) GetFuturesOrder(ctx context.Context, symbol string, orderID int64) (*exchange.Order, error) {
+func (g *gateExchange) GetFuturesOrder(ctx context.Context, symbol string, orderID string) (*exchange.Order, error) {
 	return nil, nil
 }
 
-func (g *gateExchange) CancelFuturesOrder(ctx context.Context, symbol string, orderID int64) (*exchange.Order, error) {
+func (g *gateExchange) CancelFuturesOrder(ctx context.Context, symbol string, orderID string) (*exchange.Order, error) {
 	return nil, nil
 }
 
@@ -94,6 +94,10 @@ func (g *gateExchange) GetFuturesSymbolSpec(ctx context.Context, symbol string) 
 			}
 			gateFuturesSpec.SetFuturesSpec(contract.Name, specTmp)
 		}
+	}
+
+	if spec == nil {
+		return nil, fmt.Errorf("合约规格不存在: %s", symbol)
 	}
 
 	return spec, nil

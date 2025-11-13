@@ -2,7 +2,7 @@ package exchange
 
 // 订单
 type Order struct {
-	OrderID       int64            `json:"orderId"`       // 订单ID
+	OrderID       string           `json:"orderId"`       // 订单ID
 	Symbol        string           `json:"symbol"`        // 交易对
 	Side          OrderSide        `json:"side"`          // 方向
 	Type          OrderType        `json:"type"`          // 类型
