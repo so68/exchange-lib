@@ -206,9 +206,11 @@ func (b *binanceExchange) CloseFuturesPositionRisk(ctx context.Context, symbol s
 	}
 
 	// 确定平仓方向：LONG 持仓用 SELL 平仓，SHORT 持仓用 BUY 平仓
+	amt, _ := strconv.ParseFloat(sidePositionRisk.PositionAmt, 64)
 	side := futures.SideTypeSell
 	if positionSide == exchange.PositionSideShort {
 		side = futures.SideTypeBuy
+		amt = -amt
 	}
 
 	// 市价平仓
@@ -216,7 +218,8 @@ func (b *binanceExchange) CloseFuturesPositionRisk(ctx context.Context, symbol s
 		Symbol(symbol).
 		Side(side).
 		Type(futures.OrderTypeMarket).
-		ClosePosition(true). // 关键：全平仓
+		Quantity(fmt.Sprintf("%.8f", amt)).                           // 必须传持仓数量
+		PositionSide(futures.PositionSideType(string(positionSide))). // 持仓方向
 		Do(ctx)
 
 	if err != nil {

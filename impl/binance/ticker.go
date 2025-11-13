@@ -16,14 +16,18 @@ func (b *binanceExchange) GetSpotSymbolTickers(ctx context.Context, symbols ...s
 	var res []*exchange.Ticker
 	for _, ticker := range resp {
 		res = append(res, &exchange.Ticker{
-			Symbol:      ticker.Symbol,
-			OpenPrice:   ticker.OpenPrice,
-			HighPrice:   ticker.HighPrice,
-			LowPrice:    ticker.LowPrice,
-			LastPrice:   ticker.LastPrice,
-			Volume:      ticker.Volume,
-			QuoteVolume: ticker.QuoteVolume,
-			Count:       ticker.Count,
+			Symbol:             ticker.Symbol,
+			PriceChange:        ticker.PriceChange,
+			PriceChangePercent: ticker.PriceChangePercent,
+			WeightedAvgPrice:   ticker.WeightedAvgPrice,
+			LastPrice:          ticker.LastPrice,
+			LastQty:            ticker.LastQty,
+			OpenPrice:          ticker.OpenPrice,
+			HighPrice:          ticker.HighPrice,
+			LowPrice:           ticker.LowPrice,
+			Volume:             ticker.Volume,
+			QuoteVolume:        ticker.QuoteVolume,
+			Count:              ticker.Count,
 		})
 	}
 	return &exchange.Tickers{
@@ -42,14 +46,18 @@ func (b *binanceExchange) GetFuturesSymbolTickers(ctx context.Context, symbols .
 
 		for _, t := range resp {
 			res = append(res, &exchange.Ticker{
-				Symbol:      t.Symbol,
-				OpenPrice:   t.OpenPrice,
-				HighPrice:   t.HighPrice,
-				LowPrice:    t.LowPrice,
-				LastPrice:   t.LastPrice,
-				Volume:      t.Volume,
-				QuoteVolume: t.QuoteVolume,
-				Count:       t.Count,
+				Symbol:             t.Symbol,
+				PriceChange:        t.PriceChange,
+				PriceChangePercent: t.PriceChangePercent,
+				WeightedAvgPrice:   t.WeightedAvgPrice,
+				LastPrice:          t.LastPrice,
+				LastQty:            t.LastQuantity,
+				OpenPrice:          t.OpenPrice,
+				HighPrice:          t.HighPrice,
+				LowPrice:           t.LowPrice,
+				Volume:             t.Volume,
+				QuoteVolume:        t.QuoteVolume,
+				Count:              t.Count,
 			})
 		}
 	}
