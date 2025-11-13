@@ -13,7 +13,7 @@ type Balance struct {
 type Exchange interface {
 	///////////////////////////////// 现货 /////////////////////////////////////////
 	// GetSpotSymbolTickers 获取现货交易对行情
-	GetSpotSymbolTickers(ctx context.Context, symbol ...string) (*Tickers, error)
+	GetSpotSymbolTickers(ctx context.Context, symbols ...string) (*Tickers, error)
 	// GetSpotBalance 获取现货余额
 	GetSpotBalance(ctx context.Context) ([]Balance, error)
 	// CreateSpotOrder 现货下单
@@ -25,7 +25,7 @@ type Exchange interface {
 
 	///////////////////////////////// 合约 /////////////////////////////////////////
 	// GetFuturesSymbolTickers 获取合约交易对行情
-	GetFuturesSymbolTickers(ctx context.Context, symbol ...string) (*Tickers, error)
+	GetFuturesSymbolTickers(ctx context.Context, symbols ...string) (*Tickers, error)
 	// GetFuturesBalance 获取合约余额
 	GetFuturesBalance(ctx context.Context) ([]Balance, error)
 	// CreateFuturesOrder 合约下单

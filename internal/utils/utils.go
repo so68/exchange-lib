@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"fmt"
 	"math/big"
+	"regexp"
 	"strings"
 )
 
@@ -18,11 +20,32 @@ func AmountWithPriceToQuantity(amount float64, price string, prec int) string {
 // GetNumberPrecision 从 number 字符串中提取小数位数
 func GetNumberPrecision(number string) int {
 	if !strings.Contains(number, ".") {
-		return 0
+		return 8
 	}
 	parts := strings.Split(number, ".")
 	if len(parts) != 2 {
-		return 0
+		return 8
 	}
 	return len(parts[1])
+}
+
+var contractRegex = regexp.MustCompile(`^([A-Z]{1,10})USDT(.*)?$`)
+
+// FormatSymbol 格式化交易对
+func FormatSymbol(symbol string) string {
+	if contractRegex.MatchString(symbol) {
+		matches := contractRegex.FindStringSubmatch(symbol)
+		base := matches[1]
+		suffix := matches[2] // 交割合约如 20251227
+		return fmt.Sprintf("%s_USDT%s", base, suffix)
+	}
+	return symbol
+}
+
+// FormatSymbols 格式化交易对列表
+func FormatSymbols(symbols []string) []string {
+	for _, symbol := range symbols {
+		symbols = append(symbols, FormatSymbol(symbol))
+	}
+	return symbols
 }

@@ -31,7 +31,7 @@ func NewBinanceWebsocket() exchange.Websocket {
 }
 
 // StartListenSpotTickers 开始监听现货交易对行情
-func (b *binanceWebsocket) StartListenSpotTickers(handler exchange.WebsocketTickerHandler) error {
+func (b *binanceWebsocket) StartListenSpotTickers(handler exchange.WebsocketSpotTickerHandler) error {
 	b.spotWs = client.NewWebsocket(SpotWebsocketURL+"/!ticker@arr", func(message []byte) {
 		var event []*WsAllTickerEvent
 		err := json.Unmarshal(message, &event)
@@ -39,12 +39,8 @@ func (b *binanceWebsocket) StartListenSpotTickers(handler exchange.WebsocketTick
 			return
 		}
 
-		// 转换为 exchange.Tickers
-		tickers := &exchange.Tickers{
-			Tickers: make([]*exchange.Ticker, 0),
-		}
 		for _, event := range event {
-			tickers.Tickers = append(tickers.Tickers, &exchange.Ticker{
+			spotTicker := &exchange.Ticker{
 				Symbol:             event.Symbol,
 				PriceChange:        event.PriceChange,
 				PriceChangePercent: event.PriceChangePercent,
@@ -57,17 +53,15 @@ func (b *binanceWebsocket) StartListenSpotTickers(handler exchange.WebsocketTick
 				Volume:             event.TotalVolume,
 				QuoteVolume:        event.TotalQuoteVolume,
 				Count:              event.TradeCount,
-			})
+			}
+			handler(spotTicker)
 		}
-
-		// 调用回调函数
-		handler(tickers)
 	})
 	return b.spotWs.Start()
 }
 
 // StartListenFuturesTickers 开始监听合约交易对行情
-func (b *binanceWebsocket) StartListenFuturesTickers(handler exchange.WebsocketTickerHandler) error {
+func (b *binanceWebsocket) StartListenFuturesTickers(handler exchange.WebsocketFuturesTickerHandler) error {
 	b.futuresWs = client.NewWebsocket(FuturesWebsocketURL, func(message []byte) {
 		var event []*WsAllTickerEvent
 		err := json.Unmarshal(message, &event)
@@ -75,12 +69,8 @@ func (b *binanceWebsocket) StartListenFuturesTickers(handler exchange.WebsocketT
 			return
 		}
 
-		// 转换为 exchange.Tickers
-		tickers := &exchange.Tickers{
-			Tickers: make([]*exchange.Ticker, 0),
-		}
 		for _, event := range event {
-			tickers.Tickers = append(tickers.Tickers, &exchange.Ticker{
+			futuresTicker := &exchange.Ticker{
 				Symbol:             event.Symbol,
 				PriceChange:        event.PriceChange,
 				PriceChangePercent: event.PriceChangePercent,
@@ -93,11 +83,9 @@ func (b *binanceWebsocket) StartListenFuturesTickers(handler exchange.WebsocketT
 				Volume:             event.TotalVolume,
 				QuoteVolume:        event.TotalQuoteVolume,
 				Count:              event.TradeCount,
-			})
+			}
+			handler(futuresTicker)
 		}
-
-		// 调用回调函数
-		handler(tickers)
 	})
 	return b.futuresWs.Start()
 }

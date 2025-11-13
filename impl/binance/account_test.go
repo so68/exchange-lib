@@ -20,7 +20,8 @@ func TestSpotBalance(t *testing.T) {
 	}
 }
 
-// TestFuturesBalance 获取合约余额 go test -v ./impl/binance -run "^TestFuturesBalance$"
+// TestFuturesBalance 获取合约余额
+// go test -v ./impl/binance -run "^TestFuturesBalance$"
 func TestFuturesBalance(t *testing.T) {
 	binanceExchange := NewBinance(apiKey, secretKey)
 	balances, err := binanceExchange.GetFuturesBalance(context.Background())

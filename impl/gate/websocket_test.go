@@ -1,4 +1,4 @@
-package binance
+package gate
 
 import (
 	"fmt"
@@ -8,10 +8,10 @@ import (
 )
 
 // TestListenSpotTickers 监听现货交易对行情
-// go test -v ./impl/binance -run "^TestListenSpotTickers$"
+// go test -v ./impl/gate -run "^TestListenSpotTickers$"
 func TestListenSpotTickers(t *testing.T) {
-	binanceWebsocket := NewBinanceWebsocket()
-	err := binanceWebsocket.StartListenSpotTickers(func(ticker *exchange.Ticker) {
+	gateWebsocket := NewGateWebsocket()
+	err := gateWebsocket.StartListenSpotTickers(func(ticker *exchange.Ticker) {
 		fmt.Println("===>", ticker)
 	})
 	if err != nil {
@@ -23,10 +23,10 @@ func TestListenSpotTickers(t *testing.T) {
 }
 
 // TestListenFuturesTickers 监听合约交易对行情
-// go test -v ./impl/binance -run "^TestListenFuturesTickers$"
+// go test -v ./impl/gate -run "^TestListenFuturesTickers$"
 func TestListenFuturesTickers(t *testing.T) {
-	binanceWebsocket := NewBinanceWebsocket()
-	err := binanceWebsocket.StartListenFuturesTickers(func(ticker *exchange.Ticker) {
+	gateWebsocket := NewGateWebsocket()
+	err := gateWebsocket.StartListenFuturesTickers(func(ticker *exchange.Ticker) {
 		fmt.Println("===>", ticker)
 	})
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 )
 
 // GetSpotBalance 获取现货余额
-func (g *gateSpot) GetSpotBalance(ctx context.Context) ([]exchange.Balance, error) {
+func (g *gateExchange) GetSpotBalance(ctx context.Context) ([]exchange.Balance, error) {
 	bal, _, err := g.client.SpotApi.ListSpotAccounts(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -38,10 +38,8 @@ func (g *gateSpot) GetSpotBalance(ctx context.Context) ([]exchange.Balance, erro
 }
 
 // GetFuturesBalance 获取合约余额
-func (g *gateSpot) GetFuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
-	// Gate.io 支持多种结算货币，通常使用 USDT
-	settle := "usdt"
-	account, _, err := g.client.FuturesApi.ListFuturesAccounts(ctx, settle)
+func (g *gateExchange) GetFuturesBalance(ctx context.Context) ([]exchange.Balance, error) {
+	account, _, err := g.client.FuturesApi.ListFuturesAccounts(ctx, Settle)
 	if err != nil {
 		return nil, err
 	}
