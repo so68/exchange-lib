@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"slices"
+	"strings"
 
 	"github.com/so68/exchange-lib/exchange"
 	"github.com/so68/exchange-lib/internal/utils"
@@ -48,7 +49,7 @@ func (g *gateExchange) GetSpotSymbolTickers(ctx context.Context, symbols ...stri
 
 // GetFuturesSymbolTickers 获取合约交易对行情
 func (g *gateExchange) GetFuturesSymbolTickers(ctx context.Context, symbols ...string) (*exchange.Tickers, error) {
-	tickers, _, err := g.client.FuturesApi.ListFuturesTickers(ctx, Settle, nil)
+	tickers, _, err := g.client.FuturesApi.ListFuturesTickers(ctx, strings.ToLower(Settle), nil)
 	if err != nil {
 		return nil, fmt.Errorf("获取合约交易对行情失败: %w", err)
 	}

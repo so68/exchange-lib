@@ -38,6 +38,12 @@ type Exchange interface {
 	CloseFuturesPositionRisk(ctx context.Context, symbol string, positionSide PositionSide) error
 	// SetFuturesSLTP 设置合约止损止盈
 	SetFuturesSLTP(ctx context.Context, symbol string, positionSide PositionSide, stopPrice string, takeProfitPrice string) error
+	// SetFuturesLeverage 设置合约杠杆
+	SetFuturesLeverage(ctx context.Context, symbol string, leverage int) error
+	// SetFuturesMarginMode 设置合约保证金模式
+	SetFuturesMarginMode(ctx context.Context, symbol string, marginMode MarginMode) error
+	// SetFuturesDualMode 设置合约双模式
+	SetFuturesDualMode(ctx context.Context, dualMode bool) error
 	// CancelFuturesSLTP 撤销合约止损止盈
 	CancelFuturesSLTP(ctx context.Context, symbol string) error
 	// CancelFuturesOrder 撤销合约订单

@@ -77,8 +77,6 @@ func TestFuturesCreateOrder(t *testing.T) {
 	flag.Parse()
 
 	ctx := context.Background()
-	ctx = exchange.WithLeverage(ctx, *leverage)
-	ctx = exchange.WithMarginType(ctx, exchange.MarginTypeIsolated)
 	binanceExchange := NewBinance(apiKey, secretKey)
 
 	// 如果最新价格不存在, 或 等于 0
@@ -92,6 +90,12 @@ func TestFuturesCreateOrder(t *testing.T) {
 
 	*amount = *amount * float64(*leverage) // 数量乘以杠杆
 	quantity := utils.AmountWithPriceToQuantity(*amount, *lastPrice, 8)
+
+	// 设置杠杆倍数
+	err := binanceExchange.SetFuturesLeverage(ctx, *symbol, *leverage)
+	if err != nil {
+		t.Fatalf("设置杠杆倍数失败: %v", err)
+	}
 
 	order, err := binanceExchange.CreateFuturesOrder(ctx, *symbol, exchange.OrderSide(*side), *lastPrice, quantity)
 	if err != nil {

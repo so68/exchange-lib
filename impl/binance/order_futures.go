@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"strconv"
-	"strings"
 
 	"github.com/adshao/go-binance/v2/futures"
 	"github.com/so68/exchange-lib/exchange"
@@ -23,16 +22,6 @@ func (b *binanceExchange) CreateFuturesOrder(ctx context.Context, symbol string,
 	quantity, err = b.filtersQuantity(spec, limitPrice, quantity)
 	if err != nil {
 		return nil, fmt.Errorf("验证交易规则失败: %w", err)
-	}
-
-	// 设置杠杆和保证金模式
-	if err := b.contextSetLeverageAndMarginMode(ctx, symbol); err != nil {
-		return nil, err
-	}
-
-	// 启用双模式
-	if err := b.enableDualMode(ctx); err != nil {
-		return nil, err
 	}
 
 	service := b.futuresClient.NewCreateOrderService().
@@ -160,6 +149,28 @@ func (b *binanceExchange) SetFuturesSLTP(ctx context.Context, symbol string, pos
 	return nil
 }
 
+// SetFuturesLeverage 设置合约杠杆
+func (b *binanceExchange) SetFuturesLeverage(ctx context.Context, symbol string, leverage int) error {
+	if _, err := b.futuresClient.NewChangeLeverageService().
+		Symbol(symbol).
+		Leverage(leverage).
+		Do(ctx); err != nil {
+		return fmt.Errorf("设置杠杆失败: %w", err)
+	}
+	return nil
+}
+
+// SetFuturesMarginMode 设置合约保证金模式
+func (b *binanceExchange) SetFuturesMarginMode(ctx context.Context, symbol string, marginMode exchange.MarginMode) error {
+	if err := b.futuresClient.NewChangeMarginTypeService().
+		Symbol(symbol).
+		MarginType(futures.MarginType(string(marginMode))).
+		Do(ctx); err != nil {
+		return fmt.Errorf("设置保证金模式失败: %w", err)
+	}
+	return nil
+}
+
 // CancelFuturesSLTP 撤销合约止损止盈
 func (b *binanceExchange) CancelFuturesSLTP(ctx context.Context, symbol string) error {
 	// 获取该 symbol 的所有开放订单
@@ -259,68 +270,12 @@ func (b *binanceExchange) CancelFuturesOrder(ctx context.Context, symbol string,
 	}, nil
 }
 
-// getLeverageAndMarginMode 获取杠杆和保证金模式
-func (b *binanceExchange) getLeverageAndMarginMode(ctx context.Context, symbol string) (int, string, error) {
-	positions, err := b.futuresClient.NewGetPositionRiskService().
-		Symbol(symbol).
-		Do(ctx)
-
-	if err != nil || len(positions) == 0 {
-		return 0, "", fmt.Errorf("未查询到 %s 持仓信息", symbol)
-	}
-
-	p := positions[0]
-	leverage, _ := strconv.Atoi(p.Leverage)
-	return leverage, strings.ToUpper(p.MarginType), nil
-}
-
-// contextSetLeverageAndMarginMode 设置杠杆和保证金模式
-func (b *binanceExchange) contextSetLeverageAndMarginMode(ctx context.Context, symbol string) error {
-	if ctx.Value(exchange.CtxKeyLeverage) != nil || ctx.Value(exchange.CtxKeyMarginType) != nil {
-		ctxLeverage := ctx.Value(exchange.CtxKeyLeverage).(int)
-		ctxMarginType := ctx.Value(exchange.CtxKeyMarginType).(string)
-		leverage, marginType, err := b.getLeverageAndMarginMode(ctx, symbol)
-		if err != nil {
-			return fmt.Errorf("获取杠杆和保证金模式失败: %w", err)
-		}
-
-		// 如果杠杆不一致，则设置杠杆
-		if ctxLeverage != leverage {
-			if _, err := b.futuresClient.NewChangeLeverageService().
-				Symbol(symbol).
-				Leverage(ctxLeverage).
-				Do(ctx); err != nil {
-				return fmt.Errorf("设置杠杆失败: %w", err)
-			}
-		}
-
-		// 如果保证金模式不一致，则设置保证金模式
-		if ctxMarginType != marginType {
-			if err := b.futuresClient.NewChangeMarginTypeService().
-				Symbol(symbol).
-				MarginType(futures.MarginType(ctxMarginType)).
-				Do(ctx); err != nil {
-				return fmt.Errorf("设置保证金模式失败: %w", err)
-			}
-		}
-	}
-	return nil
-}
-
-// enableDualMode 启用双模式
-func (b *binanceExchange) enableDualMode(ctx context.Context) error {
-	resp, err := b.futuresClient.NewGetPositionModeService().Do(ctx)
-	if err != nil {
-		return fmt.Errorf("获取双模式失败: %w", err)
-	}
-	if resp.DualSidePosition {
-		return nil
-	}
-
+// SetFuturesDualMode 设置持仓模式
+func (b *binanceExchange) SetFuturesDualMode(ctx context.Context, dualMode bool) error {
 	if err := b.futuresClient.NewChangePositionModeService().
-		DualSide(true).
+		DualSide(dualMode).
 		Do(ctx); err != nil {
-		return fmt.Errorf("设置双模式失败: %w", err)
+		return fmt.Errorf("设置持仓模式失败: %w", err)
 	}
 	return nil
 }
@@ -333,7 +288,7 @@ func (b *binanceExchange) setFuturesStopLoss(ctx context.Context, symbol string,
 		side = futures.SideTypeBuy
 	}
 	// 设置止损 (STOP_MARKET: 市价止损)
-	resp, err := b.futuresClient.NewCreateOrderService().
+	_, err := b.futuresClient.NewCreateOrderService().
 		Symbol(symbol).
 		Side(side).                        // 平仓方向
 		Type(futures.OrderTypeStopMarket). // 市价止损类型
@@ -343,12 +298,9 @@ func (b *binanceExchange) setFuturesStopLoss(ctx context.Context, symbol string,
 		PositionSide(futures.PositionSideType(string(positionSide))). // 持仓方向
 		WorkingType(futures.WorkingTypeMarkPrice).                    // 使用 Mark Price
 		Do(ctx)
+
 	if err != nil {
 		return fmt.Errorf("设置止损失败: %w", err)
-	}
-	fmt.Println(resp)
-	if resp.OrderID == 0 {
-		return fmt.Errorf("设置止损失败: 订单ID为0")
 	}
 	return nil
 }
@@ -371,6 +323,7 @@ func (b *binanceExchange) setFuturesTakeProfit(ctx context.Context, symbol strin
 		PositionSide(futures.PositionSideType(string(positionSide))). // 持仓方向
 		WorkingType(futures.WorkingTypeMarkPrice).                    // 使用 Mark Price
 		Do(ctx)
+
 	if err != nil {
 		return fmt.Errorf("设置止盈失败: %w", err)
 	}

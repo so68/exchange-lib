@@ -3,6 +3,7 @@ package gate
 import (
 	"fmt"
 	"math/big"
+	"strconv"
 )
 
 // filtersQuantity 获取交易对数量精度
@@ -53,4 +54,43 @@ func (g *gateExchange) filtersQuantity(spec *symbolSpec, price, quantity string)
 	quantityFloat = quantityFloat.Quo(quantityFloat, multiplier)
 
 	return quantityFloat.Text('f', spec.AmountPrecision), nil
+}
+
+// filtersFuturesSize 获取合约订单数量
+func (g *gateExchange) filtersFuturesSize(spec *futuresSpec, price, amount string) (int64, error) {
+	quantoMultiplierFloat := new(big.Float).SetPrec(64)
+	if _, ok := quantoMultiplierFloat.SetString(spec.QuantoMultiplier); !ok {
+		return 0, fmt.Errorf("无效的转换结算货币的乘数: %s", spec.QuantoMultiplier)
+	}
+	priceFloat := new(big.Float).SetPrec(64)
+	if _, ok := priceFloat.SetString(price); !ok {
+		return 0, fmt.Errorf("无效的价格: %s", price)
+	}
+	amountFloat := new(big.Float).SetPrec(64)
+	if _, ok := amountFloat.SetString(amount); !ok {
+		return 0, fmt.Errorf("无效的数量: %s", amount)
+	}
+
+	// 合约价值 = 合约单位 × 当前价格
+	contractValue := priceFloat.Mul(priceFloat, quantoMultiplierFloat)
+
+	// size = 总价值 / 合约价值 ≈ 200 / 32.07 ≈ 6.24。 向下取整
+	sizeFloat := amountFloat.Quo(amountFloat, contractValue)
+	sizeInt, _ := sizeFloat.Int(nil)
+	sizeFloat = new(big.Float).SetInt(sizeInt)
+
+	// 验证size 最小值, 最大值
+	minSizeFloat := new(big.Float).SetPrec(64)
+	if _, ok := minSizeFloat.SetString(strconv.FormatInt(spec.OrderSizeMin, 10)); !ok {
+		return 0, fmt.Errorf("无效的最小数量: %d", spec.OrderSizeMin)
+	}
+	maxSizeFloat := new(big.Float).SetPrec(64)
+	if _, ok := maxSizeFloat.SetString(strconv.FormatInt(spec.OrderSizeMax, 10)); !ok {
+		return 0, fmt.Errorf("无效的最大数量: %d", spec.OrderSizeMax)
+	}
+	if sizeFloat.Cmp(minSizeFloat) < 0 || sizeFloat.Cmp(maxSizeFloat) > 0 {
+		return 0, fmt.Errorf("数量 %s 小于最小值 %d 或大于最大值 %d", sizeFloat.Text('f', 0), spec.OrderSizeMin, spec.OrderSizeMax)
+	}
+
+	return sizeInt.Int64(), nil
 }
