@@ -32,20 +32,21 @@ func GetNumberPrecision(number string) int {
 var contractRegex = regexp.MustCompile(`^([A-Z]{1,10})USDT(.*)?$`)
 
 // FormatSymbol 格式化交易对
-func FormatSymbol(symbol string) string {
+func FormatSymbol(symbol string, ft string) string {
 	if contractRegex.MatchString(symbol) {
 		matches := contractRegex.FindStringSubmatch(symbol)
 		base := matches[1]
 		suffix := matches[2] // 交割合约如 20251227
-		return fmt.Sprintf("%s_USDT%s", base, suffix)
+		return fmt.Sprintf("%s%sUSDT%s", base, ft, suffix)
 	}
+
 	return symbol
 }
 
 // FormatSymbols 格式化交易对列表
-func FormatSymbols(symbols []string) []string {
+func FormatSymbols(symbols []string, ft string) []string {
 	for _, symbol := range symbols {
-		symbols = append(symbols, FormatSymbol(symbol))
+		symbols = append(symbols, FormatSymbol(symbol, ft))
 	}
 	return symbols
 }

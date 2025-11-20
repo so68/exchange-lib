@@ -21,7 +21,7 @@ func TestSpotCreateOrder(t *testing.T) {
 
 	ctx := context.Background()
 	gateExchange := NewGateExchange(apiKey, secretKey)
-	*symbol = utils.FormatSymbol(*symbol)
+	*symbol = utils.FormatSymbol(*symbol, "_")
 
 	// 如果最新价格不存在, 或 等于 0
 	if *lastPrice == "" || *lastPrice == "0" {
@@ -51,7 +51,7 @@ func TestSpotCreateOrder(t *testing.T) {
 func TestSpotGetOrder(t *testing.T) {
 	flag.Parse()
 
-	*symbol = utils.FormatSymbol(*symbol)
+	*symbol = utils.FormatSymbol(*symbol, "_")
 
 	ctx := context.Background()
 	gateExchange := NewGateExchange(apiKey, secretKey)
@@ -67,7 +67,7 @@ func TestSpotGetOrder(t *testing.T) {
 func TestFuturesGetPositionRisk(t *testing.T) {
 	flag.Parse()
 
-	*symbol = utils.FormatSymbol(*symbol)
+	*symbol = utils.FormatSymbol(*symbol, "_")
 	gateExchange := NewGateExchange(apiKey, secretKey)
 
 	positions, err := gateExchange.GetFuturesPositionRisk(context.Background(), *symbol)
@@ -84,7 +84,7 @@ func TestFuturesGetPositionRisk(t *testing.T) {
 func TestSpotCancelOrder(t *testing.T) {
 	flag.Parse()
 
-	*symbol = utils.FormatSymbol(*symbol)
+	*symbol = utils.FormatSymbol(*symbol, "_")
 
 	ctx := context.Background()
 	gateExchange := NewGateExchange(apiKey, secretKey)
@@ -103,7 +103,7 @@ func TestFuturesCreateOrder(t *testing.T) {
 	ctx := context.Background()
 	gateExchange := NewGateExchange(apiKey, secretKey)
 
-	*symbol = utils.FormatSymbol(*symbol)
+	*symbol = utils.FormatSymbol(*symbol, "_")
 
 	// 如果最新价格不存在, 或 等于 0
 	if *lastPrice == "" || *lastPrice == "0" {
@@ -161,7 +161,7 @@ func TestFuturesCancelOrder(t *testing.T) {
 func TestFuturesSetSLTP(t *testing.T) {
 	flag.Parse()
 
-	*symbol = utils.FormatSymbol(*symbol)
+	*symbol = utils.FormatSymbol(*symbol, "_")
 	gateExchange := NewGateExchange(apiKey, secretKey)
 	err := gateExchange.SetFuturesSLTP(context.Background(), *symbol, exchange.PositionSideShort, "3200", "3000")
 	if err != nil {
@@ -175,7 +175,7 @@ func TestFuturesSetSLTP(t *testing.T) {
 func TestFuturesCancelSLTP(t *testing.T) {
 	flag.Parse()
 
-	*symbol = utils.FormatSymbol(*symbol)
+	*symbol = utils.FormatSymbol(*symbol, "_")
 	gateExchange := NewGateExchange(apiKey, secretKey)
 	err := gateExchange.CancelFuturesSLTP(context.Background(), *symbol)
 	if err != nil {

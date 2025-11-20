@@ -18,7 +18,7 @@ func (g *gateExchange) GetSpotSymbolTickers(ctx context.Context, symbols ...stri
 		return nil, fmt.Errorf("获取现货交易对行情失败: %w", err)
 	}
 
-	symbols = utils.FormatSymbols(symbols)
+	symbols = utils.FormatSymbols(symbols, "_")
 	var data []*exchange.Ticker
 	for _, ticker := range tickers {
 		// 如果传入了 symbols，并且当前交易对不在 symbols 中，则跳过
@@ -54,7 +54,7 @@ func (g *gateExchange) GetFuturesSymbolTickers(ctx context.Context, symbols ...s
 		return nil, fmt.Errorf("获取合约交易对行情失败: %w", err)
 	}
 
-	symbols = utils.FormatSymbols(symbols)
+	symbols = utils.FormatSymbols(symbols, "_")
 	var data []*exchange.Ticker
 	for _, ticker := range tickers {
 		// 如果传入了 symbols，并且当前交易对不在 symbols 中，则跳过
